@@ -21,15 +21,16 @@ def list_elb_checks():
             yield entry.name, check
 
 
-def check_elb(client):
+def check_elb(session):
     """
     Perform all elb checks on all elbs for a given region.
-    :param client: boto3 elb client.
+    :param session: boto3 session.
     :return: generator that yield the results as a tuple (<name of the check>, <elb name>, <check result>)
     """
+    client = session.client('elb')
     for elb in list_load_balancer(client):
         for check_name, check in list_elb_checks():
-            name, status = check(client, elb)
+            name, status = check(session, elb)
             yield (check_name, name, status)
 
 
